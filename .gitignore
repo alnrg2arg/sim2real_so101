@@ -46,6 +46,10 @@ infer_v*/
 *.hdf5
 *.parquet
 
+# 단, repo에 포함할 예시 추론 결과는 예외
+!inference_results/**/*.mp4
+!inference_results/**/trajectory.npz
+
 # 환경 파일
 .env
 .env.local
