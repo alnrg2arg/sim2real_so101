@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Docker compose runtime mounts (지정만, 트래킹 금지)
+# docker-compose.yml에서 이 경로들을 컨테이너로 마운트합니다.
+# 직접 만든 cache/log/data는 절대 커밋하지 마세요.
+cache/
+data/
+logs/
+documents/
+datasets/
+
+# Isaac Sim USD/scene/robot 에셋 (수십 MB) — 별도 다운로드 안내
+assets/
+
+# 학습 산출물
+*.pt
+*.pth
+*.ckpt
+*.tar.gz
+*.tar
+checkpoints/
+rl_output/
+rl_sac_state*/
+infer_v*/
+
+# 영상/이미지/대용량 데이터
+*.mp4
+*.avi
+*.mov
+*.npz
+*.h5
+*.hdf5
+*.parquet
+
+# 환경 파일
+.env
+.env.local
+
+# 임시 로그
+*.log

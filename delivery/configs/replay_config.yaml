@@ -1,0 +1,110 @@
+# Reward & Training Configuration for Lift Cube RL
+# All weights and thresholds in one place
+
+# ── Episode ──
+episode_length_s: 10.0
+sim_render_interval: 2
+num_envs: 1
+enable_cameras: true
+camera_width: 640
+camera_height: 480
+
+# ── Motor (STS3215 real specs) ──
+motor:
+  effort_limit_nm: 3.5
+  velocity_limit_rads: 6.3
+
+# ── Positive Rewards ──
+rewards:
+  reach_coarse:
+    weight: 2.0
+    std: 0.3
+  reach_fine:
+    weight: 4.0
+    std: 0.05
+  gripper_open:
+    weight: 3.0
+    near_dist: 0.10
+  gripper_align:
+    weight: 5.0
+    near_dist: 0.15
+  gripper_close:
+    weight: 10.0
+    near_dist: 0.05
+  grasp_hold:
+    weight: 15.0
+  grasp:
+    weight: 25.0
+  lift_low:
+    weight: 20.0
+    min_height: 0.05
+    max_height: 0.10
+  lift_high:
+    weight: 20.0
+    min_height: 0.10
+    max_height: 0.25
+  hold:
+    weight: 15.0
+
+# ── Penalties ──
+penalties:
+  drop:
+    weight: -1.0
+    terminate: false
+  out_of_reach:
+    weight: -0.5
+    max_dist: 0.50
+    terminate: false
+  table_collision:
+    weight: -0.5
+    table_height: 0.05
+    terminate: false
+  velocity_excess:
+    weight: -0.005
+    threshold_rads: 3.0
+    terminate: false
+  lateral_deviation:
+    weight: -0.5
+    corridor_half_width: 0.20
+    disable_after_iter: 20000
+
+# ── Mass Curriculum (kg) ──
+mass_curriculum:
+  - { until_iter: 3000,      mass: 5.0,  label: "5kg" }
+  - { until_iter: 6000,      mass: 3.0,  label: "3kg" }
+  - { until_iter: 9000,      mass: 1.0,  label: "1kg" }
+  - { until_iter: 12000,     mass: 0.5,  label: "0.5kg" }
+  - { until_iter: 99999999,  mass: 0.2,  label: "0.2kg" }
+
+
+
+
+# ── Position & Angle Curriculum ──
+position_curriculum:
+  - { until_iter: 5000,     xy_cm: 2,   yaw_deg: 10,  label: "Stage 1: ±2cm ±10°" }
+  - { until_iter: 20000,    xy_cm: 5,   yaw_deg: 30,  label: "Stage 2: ±5cm ±30°" }
+  - { until_iter: 100000,   xy_cm: 10,  yaw_deg: 60,  label: "Stage 3: ±10cm ±60°" }
+  - { until_iter: 500000,   xy_cm: 15,  yaw_deg: 120, label: "Stage 4: ±15cm ±120°" }
+  - { until_iter: 99999999, xy_cm: 20,  yaw_deg: 180, label: "Stage 5: ±20cm ±180°" }
+
+# ── PPO ──
+ppo:
+  learning_rate: 3.0e-4
+  num_learning_epochs: 5
+  num_mini_batches: 4
+  gamma: 0.99
+  lam: 0.95
+  entropy_coef: 0.01
+  clip_param: 0.2
+  max_grad_norm: 1.0
+  init_noise_std: 1.0
+  actor_hidden_dims: [256, 128, 64]
+  critic_hidden_dims: [256, 128, 64]
+  num_steps_per_env: 48
+
+# ── Data Collection ──
+data_collection:
+  hold_stable_min_steps: 10
+  hold_stable_height: 0.10
+  contact_force_min: 0.1
+  grasp_threshold: 0.26

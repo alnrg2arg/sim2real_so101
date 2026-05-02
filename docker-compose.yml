@@ -1,0 +1,94 @@
+services:
+  leisaac:
+    image: leisaac:sim51
+    container_name: leisaac
+    restart: unless-stopped
+
+    runtime: nvidia
+
+    network_mode: host
+    ipc: host
+    stdin_open: true
+    tty: true
+    shm_size: "16gb"
+
+    environment:
+      ACCEPT_EULA: "Y"
+      PRIVACY_CONSENT: "Y"
+      OMNI_ENV_PRIVACY_CONSENT: "Y"
+      OMNI_KIT_ACCEPT_EULA: "YES"
+      OMNI_KIT_ALLOW_ROOT: "1"
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "all"
+      DISPLAY: ":1"
+
+    working_dir: /workspace/leisaac
+
+    volumes:
+      - ./cache/kit:/isaac-sim/kit/cache
+      - ./cache/ov:/root/.cache/ov
+      - ./cache/pip:/root/.cache/pip
+      - ./cache/glcache:/root/.cache/nvidia/GLCache
+      - ./cache/computecache:/root/.nv/ComputeCache
+      - ./logs/omniverse:/root/.nvidia-omniverse/logs
+      - ./logs/kit:/isaac-sim/kit/logs/Kit/Isaac-Sim
+      - ./data/ov:/root/.local/share/ov/data
+
+      - ./documents:/root/Documents
+      - ./datasets:/workspace/leisaac/datasets
+      - ./assets:/workspace/leisaac/assets
+      - ./delivery:/workspace/delivery
+      - ./data/rl_output:/data/rl_output
+
+    entrypoint: []
+
+    command:
+      - /bin/bash
+      - -c
+      - |
+          mkdir -p /data/rl_output
+          echo "[leisaac] idle container ready"
+          sleep infinity
+
+  smolvla:
+    build:
+      context: .
+      dockerfile: Dockerfile.smolvla
+    image: smolvla:latest
+    container_name: smolvla
+    restart: unless-stopped
+
+    runtime: nvidia
+
+    network_mode: host
+    ipc: host
+    stdin_open: true
+    tty: true
+    shm_size: "16gb"
+
+    environment:
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "all"
+
+    working_dir: /workspace
+
+    volumes:
+      # RL output 공유 (leisaac과 같은 경로)
+      - ./data/rl_output:/data/rl_output
+      # SmolVLA 전용
+      - ./data/lerobot_dataset:/data/lerobot_dataset
+      - ./data/smolvla_ckpt:/data/smolvla_ckpt
+      # 스크립트
+      - ./delivery/packages/vla:/workspace/vla
+      # HuggingFace 캐시
+      - ./cache/huggingface:/root/.cache/huggingface
+
+    entrypoint: []
+
+    command:
+      - /bin/bash
+      - -c
+      - |
+          mkdir -p /data/rl_output /data/lerobot_dataset /data/smolvla_ckpt
+          echo "[smolvla] ready"
+          sleep infinity

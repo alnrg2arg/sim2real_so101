@@ -1,0 +1,48 @@
+# SO101 Robot Configuration
+
+robot:
+  name: SO101 Follower
+  joint_names:
+    - shoulder_pan
+    - shoulder_lift
+    - elbow_flex
+    - wrist_flex
+    - wrist_roll
+    - gripper
+
+  # STS3215 servo specs
+  servo:
+    model: STS3215
+    effort_limit_nm: 3.5
+    velocity_limit_rads: 6.3   # ~60 RPM no-load
+    stiffness: 17.8
+    damping: 0.6
+
+  # Joint limits (degrees, from USD)
+  joint_limits:
+    shoulder_pan: [-110, 110]
+    shoulder_lift: [-100, 100]
+    elbow_flex: [-100, 90]
+    wrist_flex: [-95, 95]
+    wrist_roll: [-160, 160]
+    gripper: [-10, 100]
+
+  # Body masses (kg, from USD)
+  body_masses:
+    base: 0.147
+    shoulder: 0.100
+    upper_arm: 0.103
+    lower_arm: 0.104
+    wrist: 0.079
+    gripper: 0.087
+    jaw: 0.012
+
+  # EE frame: jaw (index 1) = inner gripper tip
+  ee_frame_index: 1
+  ee_jaw_offset: [-0.021, -0.070, 0.02]
+
+# Target object
+object:
+  name: toothpaste tube
+  target_mass_kg: 0.2
+  initial_height: 0.056

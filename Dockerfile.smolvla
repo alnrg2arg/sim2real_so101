@@ -1,0 +1,31 @@
+FROM nvcr.io/nvidia/pytorch:25.04-py3
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+      git git-lfs ffmpeg libgl1 libglib2.0-0 \
+      curl wget unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git lfs install
+
+# LeRobot + SmolVLA
+RUN pip install --no-cache-dir \
+      lerobot \
+      accelerate \
+      wandb \
+      opencv-python-headless \
+      av \
+      "imageio[ffmpeg]"
+
+# gRPC (LeISAAC policy transport)
+RUN pip install --no-cache-dir \
+      grpcio \
+      grpcio-tools \
+      protobuf
+
+WORKDIR /workspace
+
+RUN mkdir -p /data/rl_output /data/lerobot_dataset /data/smolvla_ckpt
+
+CMD ["/bin/bash", "-c", "echo '[smolvla] ready'; sleep infinity"]
